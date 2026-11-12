@@ -1,0 +1,95 @@
+{
+  "dataset": "synthetic workload data; diagnostic only",
+  "test_samples": 1500,
+  "random_forest": {
+    "accuracy_vs_synthetic_label": 0.9473,
+    "macro_f1_vs_synthetic_label": 0.9407,
+    "classification_report": {
+      "container": {
+        "precision": 0.962,
+        "recall": 0.959122632103689,
+        "f1-score": 0.9605591612581128,
+        "support": 1003.0
+      },
+      "serverless": {
+        "precision": 0.918,
+        "recall": 0.9235412474849095,
+        "f1-score": 0.9207622868605817,
+        "support": 497.0
+      },
+      "accuracy": 0.9473333333333334,
+      "macro avg": {
+        "precision": 0.94,
+        "recall": 0.9413319397942992,
+        "f1-score": 0.9406607240593472,
+        "support": 1500.0
+      },
+      "weighted avg": {
+        "precision": 0.9474213333333333,
+        "recall": 0.9473333333333334,
+        "f1-score": 0.9473731302077308,
+        "support": 1500.0
+      }
+    },
+    "confusion_matrix_labels": [
+      "container",
+      "serverless"
+    ],
+    "confusion_matrix": [
+      [
+        962,
+        41
+      ],
+      [
+        38,
+        459
+      ]
+    ]
+  },
+  "rule_based": {
+    "accuracy_vs_synthetic_label": 0.7053,
+    "macro_f1_vs_synthetic_label": 0.6976,
+    "classification_report": {
+      "container": {
+        "precision": 0.8805970149253731,
+        "recall": 0.6470588235294118,
+        "f1-score": 0.7459770114942529,
+        "support": 1003.0
+      },
+      "serverless": {
+        "precision": 0.5360419397116645,
+        "recall": 0.8229376257545271,
+        "f1-score": 0.6492063492063492,
+        "support": 497.0
+      },
+      "accuracy": 0.7053333333333334,
+      "macro avg": {
+        "precision": 0.7083194773185189,
+        "recall": 0.7349982246419695,
+        "f1-score": 0.6975916803503011,
+        "support": 1500.0
+      },
+      "weighted avg": {
+        "precision": 0.7664344333378976,
+        "recall": 0.7053333333333334,
+        "f1-score": 0.7139136653895275,
+        "support": 1500.0
+      }
+    },
+    "confusion_matrix_labels": [
+      "container",
+      "serverless"
+    ],
+    "confusion_matrix": [
+      [
+        649,
+        354
+      ],
+      [
+        88,
+        409
+      ]
+    ]
+  },
+  "warning": "Synthetic labels only; these metrics do not prove real cloud cost, latency, or SLA improvements."
+}
