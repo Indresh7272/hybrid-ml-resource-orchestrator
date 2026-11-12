@@ -15,3 +15,8 @@ class PredictionInput(BaseModel):
     sepal_width: float = Field(gt=0)
     petal_length: float = Field(gt=0)
     petal_width: float = Field(gt=0)
+
+
+class HybridInferenceRequest(BaseModel):
+    workload: WorkloadState
+    prediction: PredictionInput
