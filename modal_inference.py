@@ -55,3 +55,24 @@ def fastapi_app():
         }
 
     return api
+
+
+@app.function(image=image)
+def predict_iris_remote(
+    sepal_length: float,
+    sepal_width: float,
+    petal_length: float,
+    petal_width: float,
+) -> dict:
+    """Execute Iris inference remotely through Modal SDK."""
+
+    from app.model_service import predict_iris
+
+    features = [
+        sepal_length,
+        sepal_width,
+        petal_length,
+        petal_width,
+    ]
+
+    return predict_iris(features)
