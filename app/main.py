@@ -6,12 +6,13 @@ import secrets
 from functools import lru_cache
 from time import perf_counter
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 
 from app.schemas import (
     WorkloadState,
     PredictionInput,
     HybridInferenceRequest,
+    BenchmarkInferenceRequest
 )
 
 from app.orchestrator import choose_runtime
