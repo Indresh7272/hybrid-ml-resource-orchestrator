@@ -1,6 +1,7 @@
 
 import os
 import modal
+import secrets
 
 from functools import lru_cache
 from time import perf_counter
@@ -47,6 +48,7 @@ EXAMPLE_SLO_MS = 500.0
 # --------------------------------------------------
 
 ACTUAL_SLO_MS = 500.0
+BENCHMARK_API_KEY = os.getenv("BENCHMARK_API_KEY", "")
 
 MODAL_APP_NAME = "hybrid-ml-serverless-inference"
 MODAL_FUNCTION_NAME = "predict_iris_remote"
@@ -389,3 +391,89 @@ def metrics_reset():
     return {
         "status": "metrics reset"
     }
+
+@app.post("/benchmark/predict")
+def benchmark_predict(
+    payload: BenchmarkInferenceRequest,
+    x_benchmark_key: str | None = Header(default=None)
+):
+    # Keep this endpoint protected from unauthorized requests.
+    if not BENCHMARK_API_KEY:
+        raise HTTPException(
+            status_code=503,
+            detail="Benchmark endpoint is disabled. Configure BENCHMARK_API_KEY."
+        )
+
+    if (
+        not x_benchmark_key
+        or not secrets.compare_digest(x_benchmark_key, BENCHMARK_API_KEY)
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid benchmark API key."
+        )
+
+    # Get the ML model's recommendation separately from the forced runtime.
+    recommendation = choose_runtime(payload.workload)
+    runtime = payload.execution_runtime
+
+    start_time = perf_counter()
+
+    try:
+        features = [
+            payload.prediction.sepal_length,
+            payload.prediction.sepal_width,
+            payload.prediction.petal_length,
+            payload.prediction.petal_width
+        ]
+
+        # Execute on the specifically requested runtime.
+        if runtime == "container":
+            prediction_result = predict_iris(features)
+        else:
+            prediction_result = call_modal_inference(payload.prediction)
+
+        measured_latency = (perf_counter() - start_time) * 1000
+        sla_violation = measured_latency > ACTUAL_SLO_MS
+
+        record_actual(
+            runtime,
+            measured_latency,
+            success=True,
+            sla_violation=sla_violation
+        )
+
+        return {
+            "benchmark_mode": "forced_runtime",
+            "recommended_runtime": recommendation.get("selected_runtime"),
+            "recommended_policy": recommendation.get("policy"),
+            "recommendation_confidence": recommendation.get("model_confidence"),
+            "execution": {
+                "status": "success",
+                "runtime": runtime,
+                "measured_latency_ms": round(measured_latency, 3),
+                "actual_slo_ms": ACTUAL_SLO_MS,
+                "sla_violation": sla_violation,
+                "prediction": prediction_result
+            },
+            "measurement_note": (
+                "Latency is measured on the Render API server. "
+                "Container execution uses local inference in Render, "
+                "while serverless execution includes the remote Modal SDK invocation."
+            )
+        }
+
+    except Exception as exc:
+        measured_latency = (perf_counter() - start_time) * 1000
+
+        record_actual(
+            runtime,
+            measured_latency,
+            success=False,
+            sla_violation=measured_latency > ACTUAL_SLO_MS
+        )
+
+        raise HTTPException(
+            status_code=502,
+            detail=f"{runtime} inference failed: {type(exc).__name__}"
+        ) from exc

@@ -20,3 +20,9 @@ class PredictionInput(BaseModel):
 class HybridInferenceRequest(BaseModel):
     workload: WorkloadState
     prediction: PredictionInput
+
+
+class BenchmarkInferenceRequest(BaseModel):
+    workload: WorkloadState
+    prediction: PredictionInput
+    execution_runtime: Literal["container", "serverless"]
