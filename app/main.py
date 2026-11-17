@@ -2,7 +2,7 @@
 import os
 import modal
 import secrets
-
+import hashlib
 from functools import lru_cache
 from time import perf_counter
 
@@ -50,7 +50,12 @@ EXAMPLE_SLO_MS = 500.0
 
 ACTUAL_SLO_MS = 500.0
 BENCHMARK_API_KEY = os.getenv("BENCHMARK_API_KEY", "")
-
+print(
+    "[AUTH DIAGNOSTIC] "
+    f"configured={bool(BENCHMARK_API_KEY)} "
+    f"length={len(BENCHMARK_API_KEY)} "
+    f"sha256={hashlib.sha256(BENCHMARK_API_KEY.encode()).hexdigest()}"
+)
 MODAL_APP_NAME = "hybrid-ml-serverless-inference"
 MODAL_FUNCTION_NAME = "predict_iris_remote"
 
