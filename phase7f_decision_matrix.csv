@@ -1,0 +1,11 @@
+workload_type,concurrency_level,optimization_objective,allow_slo_risk,selected_runtime,reason
+bursty,3,balanced,false,container,Latency/SLO-first conservative selection
+steady,3,balanced,false,container,Latency/SLO-first conservative selection
+sustained,3,balanced,false,container,Latency/SLO-first conservative selection
+batch,3,balanced,false,container,Latency/SLO-first conservative selection
+bursty,6,balanced,false,container,Latency/SLO-first conservative selection
+steady,6,balanced,false,container,Balanced objective protects SLO over throughput
+steady,6,throughput,false,container,Serverless exception blocked unless SLO risk is explicitly accepted
+steady,6,throughput,true,serverless,Repeated measured throughput gain with explicit SLO-risk acknowledgement
+sustained,6,throughput,true,container,No repeated condition-specific serverless throughput exception
+batch,6,throughput,true,container,No repeated condition-specific serverless throughput exception

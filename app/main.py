@@ -19,7 +19,7 @@ from app.orchestrator import choose_runtime
 from app.model_service import predict_iris
 from app.metrics import record, record_actual, snapshot, reset
 from app.phase7_policy import choose_measured_runtime
-
+from app.phase7f_policy import Phase7FRequest, choose_phase7f_runtime
 # --------------------------------------------------
 # FastAPI application
 # --------------------------------------------------
@@ -508,4 +508,34 @@ def orchestrate_compare(state: WorkloadState):
             "It does not execute inference or change the existing "
             "/orchestrate/predict route."
         )
+    }
+
+@app.post("/orchestrate/adaptive")
+def orchestrate_adaptive(payload: Phase7FRequest):
+
+    # Original Random Forest recommendation
+    random_forest_decision = choose_runtime(payload.workload)
+
+    # Phase 7 empirical recommendation
+    empirical_decision = choose_measured_runtime(payload.workload)
+
+    # New Phase 7F adaptive recommendation
+    adaptive_decision = choose_phase7f_runtime(payload)
+
+    return {
+        "comparison_mode": "recommendation_only",
+
+        "random_forest_policy": random_forest_decision,
+
+        "phase7_empirical_policy": empirical_decision,
+
+        "phase7f_adaptive_policy": adaptive_decision,
+
+        "recommendations": {
+            "random_forest": random_forest_decision.get("selected_runtime"),
+            "phase7_empirical": empirical_decision.get("selected_runtime"),
+            "phase7f_adaptive": adaptive_decision.get("selected_runtime")
+        },
+
+        "execution_performed": False
     }

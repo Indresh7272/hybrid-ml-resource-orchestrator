@@ -1,0 +1,51 @@
+{
+  "evidence_scope": "Steady workload at target concurrency 6 only; pooled from Phase 7D and Phase 7E. This is a deployment-specific benchmark summary, not a universal runtime performance claim.",
+  "slo_threshold_ms": 500.0,
+  "studies": [
+    {
+      "phase": "7D",
+      "run_id": "20261118T052443Z_e8dcc6df",
+      "source_file": "phase7d_high_concurrency_20261118T052443Z_e8dcc6df.csv",
+      "paired_waves_per_runtime": 4,
+      "requests_per_runtime": 24
+    },
+    {
+      "phase": "7E",
+      "run_id": "20261118T053631Z_d0cb8c00",
+      "source_file": "phase7e_steady_concurrency_20261118T053631Z_d0cb8c00.csv",
+      "paired_waves_per_runtime": 12,
+      "requests_per_runtime": 72
+    }
+  ],
+  "steady_concurrency_6_pooled": {
+    "paired_waves_per_runtime": 16,
+    "requests_per_runtime": 96,
+    "container": {
+      "mean_server_latency_ms": 580.7168,
+      "median_server_latency_ms": 507.626,
+      "p95_server_latency_ms": 1100.6548,
+      "mean_wave_throughput_rps": 1.7053,
+      "slo_violations": 55,
+      "slo_violation_rate_pct": 57.2917
+    },
+    "serverless": {
+      "mean_server_latency_ms": 637.647,
+      "median_server_latency_ms": 568.285,
+      "p95_server_latency_ms": 992.6115,
+      "mean_wave_throughput_rps": 1.8729,
+      "slo_violations": 68,
+      "slo_violation_rate_pct": 70.8333
+    },
+    "serverless_throughput_gain_pct": 9.83,
+    "serverless_mean_latency_penalty_pct": 9.8,
+    "serverless_slo_violation_rate_penalty_percentage_points": 13.5416,
+    "paired_wave_throughput": {
+      "serverless_higher_waves": 14,
+      "container_higher_waves": 2,
+      "total_paired_waves": 16,
+      "mean_serverless_minus_container_rps": 0.167625
+    },
+    "interpretation": "Serverless had about 9.83% higher mean wave throughput and a lower request-level P95, but also about 9.80% higher mean server latency, higher median latency, and a 13.54 percentage-point higher SLO violation rate. Container is therefore the default for balanced and latency/SLO objectives. Serverless is offered only as an explicit throughput-priority option with explicit SLO-risk acknowledgement."
+  },
+  "interpretation": "Serverless had about 9.83% higher mean wave throughput for steady/concurrency-6, but also about 9.80% higher mean server latency and a 13.54 percentage-point higher SLO violation rate. Therefore serverless is offered only as an explicit throughput-priority option with an explicit allow_slo_risk acknowledgement. Balanced and latency/SLO objectives retain container."
+}
