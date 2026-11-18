@@ -20,6 +20,7 @@ from app.model_service import predict_iris
 from app.metrics import record, record_actual, snapshot, reset
 from app.phase7_policy import choose_measured_runtime
 from app.phase7f_policy import Phase7FRequest, choose_phase7f_runtime
+from fastapi.responses import HTMLResponse
 # --------------------------------------------------
 # FastAPI application
 # --------------------------------------------------
@@ -101,13 +102,184 @@ def call_modal_inference(payload: PredictionInput) -> dict:
 # Health endpoint
 # --------------------------------------------------
 
-@app.get("/health")
-def health():
+@app.get("/", response_class=HTMLResponse)
+def homepage():
+    return """
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Hybrid ML Resource Orchestrator</title>
+        <style>
+            * { box-sizing: border-box; }
 
-    return {
-        "status": "ok",
-        "phase": "hybrid execution integration",
-    }
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background: #f4f8fb;
+                color: #14354d;
+            }
+
+            nav {
+                background: #14354d;
+                color: white;
+                padding: 22px 8%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                flex-wrap: wrap;
+                gap: 16px;
+            }
+
+            nav a {
+                color: white;
+                text-decoration: none;
+                margin-left: 22px;
+                font-size: 14px;
+            }
+
+            .hero {
+                max-width: 1100px;
+                margin: 75px auto 45px;
+                padding: 20px;
+                text-align: center;
+            }
+
+            .tag {
+                color: #159d91;
+                font-weight: bold;
+                letter-spacing: 2px;
+                font-size: 12px;
+            }
+
+            h1 {
+                font-size: clamp(32px, 5vw, 52px);
+                line-height: 1.15;
+                max-width: 850px;
+                margin: 20px auto;
+            }
+
+            .description {
+                color: #647786;
+                max-width: 700px;
+                margin: 0 auto;
+                line-height: 1.8;
+            }
+
+            .button {
+                display: inline-block;
+                padding: 14px 25px;
+                margin: 25px 8px 0;
+                border-radius: 8px;
+                background: #159d91;
+                color: white;
+                text-decoration: none;
+                font-weight: bold;
+            }
+
+            .secondary {
+                background: #14354d;
+            }
+
+            .cards {
+                max-width: 1050px;
+                margin: 45px auto;
+                padding: 20px;
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 20px;
+            }
+
+            .card {
+                padding: 28px;
+                background: white;
+                border: 1px solid #d8e2e9;
+                border-radius: 12px;
+            }
+
+            .card p {
+                color: #647786;
+                line-height: 1.6;
+                font-size: 14px;
+            }
+
+            footer {
+                text-align: center;
+                padding: 30px;
+                color: #647786;
+                border-top: 1px solid #d8e2e9;
+                font-size: 13px;
+            }
+        </style>
+    </head>
+    <body>
+
+        <nav>
+            <strong>HYBRID ML ORCHESTRATOR</strong>
+            <div>
+                <a href="/">Home</a>
+                <a href="/docs">API Docs</a>
+                <a href="/redoc">ReDoc</a>
+                <a href="/health">Health</a>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <div class="tag">CLOUD + ARTIFICIAL INTELLIGENCE</div>
+
+            <h1>
+                Smarter ML Inference Through
+                Hybrid Cloud Orchestration
+            </h1>
+
+            <p class="description">
+                A workload-aware orchestration prototype that
+                evaluates containerized and serverless machine
+                learning execution through ML-driven, empirical
+                and adaptive runtime recommendations.
+            </p>
+
+            <a class="button" href="/docs">
+                Explore API Documentation
+            </a>
+
+            <a class="button secondary" href="/health">
+                Check API Health
+            </a>
+        </section>
+
+        <section class="cards">
+            <div class="card">
+                <h3>Container Inference</h3>
+                <p>Local ML inference hosted through the Render container.</p>
+            </div>
+
+            <div class="card">
+                <h3>Serverless Inference</h3>
+                <p>Remote machine learning execution using Modal.</p>
+            </div>
+
+            <div class="card">
+                <h3>ML Orchestration</h3>
+                <p>Random Forest-based workload runtime recommendations.</p>
+            </div>
+
+            <div class="card">
+                <h3>Adaptive Policies</h3>
+                <p>Compare balanced, latency/SLO and throughput objectives.</p>
+            </div>
+        </section>
+
+        <footer>
+            M.Tech CSE — AI & ML | Hybrid ML Resource Orchestrator
+            <br><br>
+            Research Prototype — Render + Modal
+        </footer>
+
+    </body>
+    </html>
+    """
 
 
 # --------------------------------------------------
