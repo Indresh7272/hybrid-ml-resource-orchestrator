@@ -281,6 +281,16 @@ def homepage():
     </html>
     """
 
+# --------------------------------------------------
+# Health check endpoint
+# --------------------------------------------------
+
+@app.get("/health")
+def health():
+    return {
+        "status": "ok",
+        "phase": "hybrid execution integration"
+    }
 
 # --------------------------------------------------
 # Direct container prediction endpoint
