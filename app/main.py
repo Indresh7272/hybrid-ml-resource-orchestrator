@@ -2,7 +2,7 @@
 import os
 import modal
 import secrets
-import hashlib
+
 from functools import lru_cache
 from time import perf_counter
 
@@ -18,7 +18,7 @@ from app.schemas import (
 from app.orchestrator import choose_runtime
 from app.model_service import predict_iris
 from app.metrics import record, record_actual, snapshot, reset
-
+from app.phase7_policy import choose_measured_runtime
 
 # --------------------------------------------------
 # FastAPI application
@@ -50,12 +50,7 @@ EXAMPLE_SLO_MS = 500.0
 
 ACTUAL_SLO_MS = 500.0
 BENCHMARK_API_KEY = os.getenv("BENCHMARK_API_KEY", "")
-print(
-    "[AUTH DIAGNOSTIC] "
-    f"configured={bool(BENCHMARK_API_KEY)} "
-    f"length={len(BENCHMARK_API_KEY)} "
-    f"sha256={hashlib.sha256(BENCHMARK_API_KEY.encode()).hexdigest()}"
-)
+
 MODAL_APP_NAME = "hybrid-ml-serverless-inference"
 MODAL_FUNCTION_NAME = "predict_iris_remote"
 
@@ -483,3 +478,34 @@ def benchmark_predict(
             status_code=502,
             detail=f"{runtime} inference failed: {type(exc).__name__}"
         ) from exc
+
+@app.post("/orchestrate/compare")
+def orchestrate_compare(state: WorkloadState):
+
+    # Original Random Forest recommendation
+    random_forest_decision = choose_runtime(state)
+
+    # New Phase 7 empirical recommendation
+    measured_decision = choose_measured_runtime(state)
+
+    return {
+        "comparison_mode": "policy_recommendations_only",
+        "workload_type": state.workload_type,
+
+        "random_forest_policy": random_forest_decision,
+
+        "phase7_empirical_policy": measured_decision,
+
+        "recommendations_agree": (
+            random_forest_decision.get("selected_runtime")
+            == measured_decision.get("selected_runtime")
+        ),
+
+        "execution_performed": False,
+
+        "note": (
+            "This endpoint compares policy recommendations only. "
+            "It does not execute inference or change the existing "
+            "/orchestrate/predict route."
+        )
+    }
